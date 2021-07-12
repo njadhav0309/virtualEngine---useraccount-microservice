@@ -1,0 +1,26 @@
+{
+  "name": "nodejs-express",
+  "version": "1.0.0",
+  "description": "First Express.js App",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/nirmala_jadhav/cca-jadhavn1.git"
+  },
+  "author": "nirmala",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://bitbucket.org/nirmala_jadhav/cca-jadhavn1/issues"
+  },
+  "homepage": "https://bitbucket.org/nirmala_jadhav/cca-jadhavn1#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cca-mongoimport": "^1.0.2",
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  }
+}

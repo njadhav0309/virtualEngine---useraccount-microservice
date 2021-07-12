@@ -1,0 +1,244 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>CCA-test page of Nirmala Jadhav</title>
+        <script src="https://udayton-cloud.bitbucket.io/clock.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="httpS://udayton-cloud.bitbucket.io/style1.css">
+        <style>
+            .button {
+                background-color:green;
+                border: none;
+                color: white;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                padding: 10px 20px 10px 20px;
+                cursor: pointer;
+                font-weight: bold;
+            }
+            .round { border-radius: 8px; }
+            #response { background-color: #FF9800; }
+            #validateResponse { color: red; background-color: silver;}
+            .main {
+                align-self: center;
+            }
+            label {
+                display:block;
+            }
+            .formStyle {
+                width: 50%;
+                border-radius:5px;
+                background-color:#f2f2f2;
+                padding:40px;
+                align-items: center;
+            }
+            .formInput {
+                width: 100%;
+                margin: 8px 0;
+                display: inline-block;
+                border: 1px solid #ccc;
+                box-shadow: inset 0 1px 3px #ddd;
+                border-radius: 4px;
+                box-sizing: border-box;
+                padding-left: 20px;
+                padding-right: 20px;
+                padding-top: 12px;
+                padding-bottom: 12px;
+            }
+            .form-div {
+                margin-bottom: 15px;
+            }
+            #loginForm, #chatWindow { 
+                display:none;
+            }
+        </style>
+    </head>
+    <body>
+    <div class="container wrapper">
+        <div id="top">
+            <h1>A test webpage for Cloud Computing and Applications</h1>
+            <h2>By Nirmala Jadhav</h2>
+
+            <div id="email" onclick="showhideEmail()">Show my email</div>
+            <script src="email.js"></script>
+        </div>
+
+        <div class="wrapper">
+            <div id="menubar">
+                <h3>Just a demo HTML page</h3>
+                <canvas id="analog-clock" width=150" height="150" style="background-color:#edfefa"></canvas>
+                <script>
+                    var canvas = document.getElementById('analog-clock');
+                    var ctx = canvas.getContext("2d");
+                    var radius = canvas.height / 2;
+                    ctx.translate(radius, radius);
+                    radius = radius * 0.90;
+                    setInterval(drawClock, 1000);
+
+                    function drawClock() {
+                        drawFace(ctx, radius);
+                        drawNumbers(ctx, radius);
+                        drawTime(ctx, radius);
+                    }
+                </script>
+            </div>
+
+            <div id ="main">
+
+                <form action="" method="POST" id="signupForm" class="formStyle">
+                    <div class="form-div">
+                        <label for="fullname">Fullname:</label>
+                        <input class="formInput" name="fullname" id="fullname" placeholder="Your name">
+                    </div>
+                    <div class="form-div">
+                        <label>Email:</label>
+                        <input class="formInput" name="email" id="emailid" type="email" placeholder="Email Address">
+                    </div>
+                    <div class="form-div">
+                        <label>Username:</label>
+                        <input class="formInput" name="username" id="username" placeholder="Username">
+                    </div>
+                    <div class="form-div">
+                        <label>Password:</label>
+                        <input class="formInput" name="password" id="password" type="password" placeholder="Password">
+                    </div>
+                    <input class="button round" type="button" value="Sign Up" onclick="Signup()">
+                    <input id="toggleButton" type="button" onclick="toggleSignupandLogin('login')" value="Already have an account? Login">
+                </form>
+
+                <form action="" method="POST" id="loginForm" class="formStyle">
+                    <div class="form-div">
+                        <label>Username:</label>
+                        <input class="formInput" name="username" id="login_username" placeholder="Username">
+                    </div>
+                    <div class="form-div">
+                        <label>Password:</label>
+                        <input class="formInput" name="password" id="login_password" type="password" placeholder="Password">
+                    </div>
+                    <input class="button round" type="button" value="Log In" onclick="LogIn()">
+                    <input id="toggleButton2" type="button" onclick="toggleSignupandLogin('signup')" value="Signup">
+                </form>
+
+                <div id="chatWindow" >
+                    <p> Chatwindow</p>
+                </div>
+
+                <div id="validateResponse"></div>
+                <div id="response"></div>
+                <script>
+                    function Signup() {
+                        $("#validateResponse").html("");
+                        var data = {};
+                        
+                        // Validate all the input fields
+                        var allInputs= document.querySelectorAll("#signupForm input[class='formInput']")
+                        console.log(allInputs);
+                        for (var i = 0, element; element = allInputs[i++];) {
+                            data[element.name] = element.value;
+                            var validateRes = validate(element.name, element.value);
+                            if(validateRes.length > 0) {
+                                $("#validateResponse").append(validateRes);
+                                return;
+                            }
+                        }
+                        console.log("Here are the posted details", data);
+                        $.post("/signup", data,               
+                            function(result) {
+                                console.log(result);
+                                if(result.status) { // Success Signup
+                                    alert("Signup successful! Please Login using credentials");
+                                    $("#loginForm").show();
+                                    $("#signupForm").hide();
+                                } else { // Unsucessful
+                                    $("#loginForm").hide();
+                                    $("#signupForm").show();
+                                }
+                            $("#response").html(result.statusMsg);
+                            $("#response").show();
+                        });
+                    }
+
+                    function validate(type, value ) {
+                        var resp = "";
+                        if(value.length == 0) {
+                            return "Empty "+type+ " not allowed";
+                        }
+
+                        switch(type) {
+                            case "username" :
+                                // Check the length
+                                if(value.length < 6) {
+                                    resp = "Username is too short. Expected length is 6 alphabets";
+                                } else if(value.length >= 15) {
+                                    resp = "Username is too long. Expected length is 15 alphabets max";
+                                }
+                                break;
+                            case "password" : 
+                                // Check the length
+                                if(value.length < 6) {
+                                    resp = "Password is too short. Expected length is 6 alphabets";
+                                } else if(value.length >= 15) {
+                                    resp = "Password is too long. Expected length is 20 alphabets max";
+                                }
+                                break;
+                            case "email" : 
+                                const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                                result =  re.test(String(value).toLowerCase());
+                                if(!result) {
+                                    resp = "Email invalid!"
+                                }
+                                break;
+                        }
+                        return resp;
+                    }
+
+                    function LogIn() {
+                        $("#validateResponse").html("");
+                        var username = $("#login_username").val();
+                        var password = $("#login_password").val();
+
+                        if(username.length == 0 || password.length == 0){
+                            $("#validateResponse").html("Empty username/password");
+                            return;
+                        } 
+
+                        $.post("/login", {username:username, password:password},               
+                            function(result) {
+                                console.log(result);
+                                if(result.status) { // Success Login
+                                    $("#chatWindow").show();
+                                    $("#signupForm").hide();
+                                    $("#loginForm").hide();
+                                } else { // Unsucessful
+                                    $("#loginForm").show();
+                                    $("#signupForm").hide();
+                                    $("#chatWindow").hide();
+                                }
+                            $("#response").html(result.statusMsg);
+                            $("#response").show();
+                        });
+
+                    }
+
+                    function toggleSignupandLogin(buttonval) {
+                        // alert("called");
+                        //var buttonval = $(this).val();
+                        console.log("Button value here", buttonval);
+                        if(buttonval == "Signup") {
+                            $("#loginForm").hide();
+                            $("#signupForm").show();
+                        } else {
+                            $("#loginForm").show();
+                            $("#signupForm").hide();
+                        }
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+    </body>
+</html>
